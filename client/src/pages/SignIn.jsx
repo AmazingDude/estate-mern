@@ -2,11 +2,18 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import {
+	signInStart,
+	signInSuccess,
+	signInFailure,
+} from "../redux/user/userSlice.js";
 
 export default function SignIn() {
 	const [formData, setFormData] = useState({});
-	const [loading, setLoading] = useState(false);
+	const { loading, error } = useSelector((state) => state.user);
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
 	const handleChange = (e) => {
 		setFormData({
@@ -17,21 +24,21 @@ export default function SignIn() {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setLoading(true);
+		dispatch(signInStart());
 		try {
 			const response = await axios.post("/api/auth/signin", formData);
 			const data = response.data;
 			console.log(data);
 			if (data.success) {
 				toast.success("Logged in successfully! 🎉");
-				setLoading(false);
+				dispatch(signInSuccess(data.user));
 				navigate("/");
 			} else {
 				toast.error(data.message || "Signup failed");
-				setLoading(false);
+				dispatch(signInFailure(data.message));
 			}
 		} catch (error) {
-			setLoading(false);
+			dispatch(signInFailure(error.message));
 			toast.error(
 				error.response?.data?.message || error.message || "Something went wrong"
 			);
