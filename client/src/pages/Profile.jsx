@@ -2,15 +2,21 @@ import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { toast } from "sonner";
+import {
+    updateUserStart,
+    updateUserFailure,
+    updateUserSuccess,
+} from "../redux/user/userSlice";
 
 function Profile() {
-    const { currentUser } = useSelector((state) => state.user);
+    const { currentUser, loading, error } = useSelector((state) => state.user);
     const dispatch = useDispatch();
 
     const fileRef = useRef(null);
     const [file, setFile] = useState(undefined);
     const [filePerc, setFilePerc] = useState(0);
     const [fileUploadError, setFileUploadError] = useState(false);
+    const [updateSuccess, setUpdateSuccess] = useState(false);
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -76,7 +82,6 @@ function Profile() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // 🔥 send update request to backend
             const res = await axios.post(
                 `/api/user/update/${currentUser._id}`,
                 formData,
@@ -84,9 +89,11 @@ function Profile() {
             );
 
             toast.success("Profile updated!");
-            // dispatch(updateUserSuccess(res.data)); // if you have redux
+            dispatch(updateUserSuccess(res.data));
+            setUpdateSuccess(true);
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
+            dispatch(updateUserFailure(error.message));
         }
     };
 
@@ -139,6 +146,7 @@ function Profile() {
                     onChange={handleChange}
                     className="border p-3 rounded-lg"
                     placeholder="Username"
+                    defaultValue={currentUser.username}
                 />
                 <input
                     type="email"
@@ -147,6 +155,7 @@ function Profile() {
                     onChange={handleChange}
                     className="border p-3 rounded-lg"
                     placeholder="Email"
+                    defaultValue={currentUser.email}
                 />
                 <input
                     type="password"
@@ -157,8 +166,11 @@ function Profile() {
                     placeholder="Password"
                 />
 
-                <button className="bg-neutral-700 text-white rounded-lg p-3 uppercase hover:opacity-90 disabled:opacity-80">
-                    Update
+                <button
+                    className="bg-neutral-700 text-white rounded-lg p-3 uppercase hover:opacity-90 disabled:opacity-80"
+                    disabled={loading}
+                >
+                    {loading ? "Updating..." : "Update"}
                 </button>
             </form>
 
@@ -170,6 +182,10 @@ function Profile() {
                     Sign Out
                 </span>
             </div>
+            <p className="text-red-700 mt-5">{error ? error : ""}</p>
+            <p className="text-red-700 mt-5">
+                {updateSuccess ? "User is updated successfully!" : ""}
+            </p>
         </div>
     );
 }
