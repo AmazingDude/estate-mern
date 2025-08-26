@@ -9,6 +9,7 @@ import {
     deleteUserFailure,
     deleteUserStart,
     deleteUserSuccess,
+    signoutUserStart,
 } from "../redux/user/userSlice";
 
 function Profile() {
@@ -120,6 +121,21 @@ function Profile() {
             dispatch(deleteUserFailure(error.message));
         }
     };
+
+    const handleSignOut = async () => {
+        try {
+            dispatch(signoutUserStart());
+            const res = await axios.get("/api/auth/signout");
+            const data = res.data;
+            if (!data.success) {
+                dispatch(deleteUserFailure(data.message));
+                return;
+            }
+            dispatch(deleteUserSuccess(data));
+        } catch (error) {
+            dispatch(deleteUserFailure(error.message));
+        }
+    };
     return (
         <div className="p-3 max-w-lg mx-auto">
             <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -204,7 +220,10 @@ function Profile() {
                 >
                     Delete Account
                 </span>
-                <span className="text-neutral-900 cursor-pointer">
+                <span
+                    className="text-neutral-900 cursor-pointer"
+                    onClick={handleSignOut}
+                >
                     Sign Out
                 </span>
             </div>
