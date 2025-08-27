@@ -164,6 +164,24 @@ function Profile() {
         }
     };
 
+    const handleListingDelete = async (listingId) => {
+        try {
+            const res = await axios.delete(`/api/listing/delete/${listingId}`, {
+                withCredentials: true,
+            });
+            const data = res.data;
+            if (data.success === false) {
+                console.log(data.message);
+                return;
+            }
+            setUserListings((prev) =>
+                prev.filter((listing) => listing._id !== listingId)
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <div className="p-3 max-w-lg mx-auto">
             <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -301,7 +319,12 @@ function Profile() {
                                 <button className="rounded transition cursor-pointer text-green-700 px-3 py-1.5 hover:text-white hover:bg-green-700">
                                     Edit
                                 </button>
-                                <button className="rounded transition cursor-pointer text-red-700 px-3 py-1.5 hover:text-white hover:bg-red-700">
+                                <button
+                                    className="rounded transition cursor-pointer text-red-700 px-3 py-1.5 hover:text-white hover:bg-red-700"
+                                    onClick={() =>
+                                        handleListingDelete(listing._id)
+                                    }
+                                >
                                     Delete
                                 </button>
                             </div>
