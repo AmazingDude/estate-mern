@@ -2,6 +2,8 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function CreateListing() {
     const [files, setFiles] = useState([]);
@@ -9,6 +11,8 @@ export default function CreateListing() {
     const [imageUploadError, setImageUploadError] = useState(null);
     const [imageUrls, setImageUrls] = useState([]);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const { currentUser } = useSelector((state) => state.user);
     const [formData, setFormData] = useState({
         imageUrls: [],
         name: "",
@@ -23,6 +27,7 @@ export default function CreateListing() {
         parking: false,
         furnished: false,
     });
+    const navigate = useNavigate();
 
     // Upload images
     const handleImageSubmit = async () => {
@@ -115,6 +120,41 @@ export default function CreateListing() {
         });
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (formData.imageUrls.length < 1)
+                return setError("You must upload at least one image");
+            if (+formData.regularPrice < +formData.discountPrice)
+                return setError(
+                    "Discount price must be lower than regular price"
+                );
+            setLoading(true);
+            setError(false);
+
+            const response = await axios.post(
+                "/api/listing/create",
+                {
+                    ...formData,
+                    userRef: currentUser._id,
+                },
+                {
+                    withCredentials: true,
+                }
+            );
+
+            const data = response.data;
+            setLoading(false);
+            if (data.success !== true) {
+                setError(data.message);
+            }
+            navigate(`/listing/${data._id}`);
+        } catch (error) {
+            setError(error.response?.data?.message || error.message);
+            setLoading(false);
+        }
+    };
+
     // useEffect(() => {
     //     console.log("FormData changed:", formData);
     // }, [formData]);
@@ -124,12 +164,15 @@ export default function CreateListing() {
             <h1 className="text-3xl font-semibold text-center my-7">
                 Create a listing
             </h1>
-            <form className="flex flex-col sm:flex-row gap-4">
+            <form
+                className="flex flex-col sm:flex-row gap-4"
+                onSubmit={handleSubmit}
+            >
                 <div className="flex flex-col gap-4 flex-1">
                     <input
                         type="text"
                         placeholder="Name"
-                        className="border p-3 rounded-lg"
+                        className="border p-3 rounded-lg bg-white"
                         id="name"
                         maxLength="62"
                         minLength="10"
@@ -140,7 +183,7 @@ export default function CreateListing() {
                     <textarea
                         type="text"
                         placeholder="Description"
-                        className="border p-3 rounded-lg"
+                        className="border p-3 rounded-lg bg-white"
                         id="description"
                         required
                         onChange={handleChange}
@@ -149,7 +192,7 @@ export default function CreateListing() {
                     <input
                         type="text"
                         placeholder="Address"
-                        className="border p-3 rounded-lg"
+                        className="border p-3 rounded-lg bg-white"
                         id="address"
                         required
                         onChange={handleChange}
@@ -240,8 +283,8 @@ export default function CreateListing() {
                             <input
                                 type="number"
                                 id="regularPrice"
-                                min="1"
-                                max="10"
+                                min="50"
+                                max="1000000"
                                 required
                                 className="p-3 border-gray-400 border bg-white rounded-lg"
                                 onChange={handleChange}
@@ -252,22 +295,24 @@ export default function CreateListing() {
                                 <span className="text-xs">($ / month)</span>
                             </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="number"
-                                id="discountPrice"
-                                min="1"
-                                max="10"
-                                required
-                                className="p-3 border-gray-400 border bg-white rounded-lg"
-                                onChange={handleChange}
-                                value={formData.discountPrice}
-                            />
-                            <div className="flex flex-col items-center">
-                                <p>Discounted Price</p>
-                                <span className="text-xs">($ / month)</span>
+                        {formData.offer && (
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="number"
+                                    id="discountPrice"
+                                    min="0"
+                                    max="10000000"
+                                    required
+                                    className="p-3 border-gray-400 border bg-white rounded-lg"
+                                    onChange={handleChange}
+                                    value={formData.discountPrice}
+                                />
+                                <div className="flex flex-col items-center">
+                                    <p>Discounted Price</p>
+                                    <span className="text-xs">($ / month)</span>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </div>
                 <div className="flex flex-col flex-1 gap-4">
@@ -318,9 +363,13 @@ export default function CreateListing() {
                                 </button>
                             </div>
                         ))}
-                    <button className="p-3 bg-slate-800 rounded-lg text-white uppercase hover:opacity-90 disabled:opacity-80 cursor-pointer">
-                        Create Listing
+                    <button
+                        className="p-3 bg-slate-800 rounded-lg text-white uppercase hover:opacity-90 disabled:opacity-80 cursor-pointer"
+                        disabled={loading || uploading}
+                    >
+                        {loading ? "Creating..." : "Create Listing"}
                     </button>
+                    {error && <p className="text-red-700 text-sm">{error}</p>}
                 </div>
             </form>
         </main>
