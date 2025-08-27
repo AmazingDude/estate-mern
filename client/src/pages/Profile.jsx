@@ -16,12 +16,13 @@ import {
 function Profile() {
     const { currentUser, loading, error } = useSelector((state) => state.user);
     const dispatch = useDispatch();
-
     const fileRef = useRef(null);
+    const [userListings, setUserListings] = useState([]);
     const [file, setFile] = useState(undefined);
     const [filePerc, setFilePerc] = useState(0);
     const [fileUploadError, setFileUploadError] = useState(false);
     const [updateSuccess, setUpdateSuccess] = useState(false);
+    const [showListingsError, setShowListingsError] = useState(false);
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -110,7 +111,7 @@ function Profile() {
                 `/api/user/delete/${currentUser._id}`,
                 { withCredentials: true }
             );
-            console.log("Delete response:", res.data); // 👈 log backend response
+            // console.log("Delete response:", res.data);
             const data = res.data;
             if (!data.success) {
                 dispatch(deleteUserFailure(data.message));
@@ -137,6 +138,32 @@ function Profile() {
             dispatch(deleteUserFailure(error.message));
         }
     };
+
+    const handleShowListings = async () => {
+        try {
+            setShowListingsError(false);
+            const res = await axios.get(
+                `/api/user/listings/${currentUser._id}`,
+                {
+                    withCredentials: true,
+                }
+            );
+
+            const data = res.data;
+            // console.log("Show listings response:", data);
+
+            if (data.success !== true) {
+                setShowListingsError(true);
+                return;
+            }
+
+            setUserListings(data.data);
+        } catch (error) {
+            console.error("Show listings error:", error);
+            setShowListingsError(true);
+        }
+    };
+
     return (
         <div className="p-3 max-w-lg mx-auto">
             <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -238,6 +265,50 @@ function Profile() {
             <p className="text-red-700 mt-5">
                 {updateSuccess ? "User is updated successfully!" : ""}
             </p>
+            <button
+                className="text-teal-700 w-full cursor-pointer"
+                onClick={handleShowListings}
+            >
+                Show Listings
+            </button>
+            <p className="text-red-700 mt-5">
+                {showListingsError ? "Error while showing the listings" : ""}
+            </p>
+            {userListings && userListings.length > 0 && (
+                <div className="flex flex-col gap-4">
+                    <h1 className="text-center mt-7 text-2xl font-semibold">
+                        Your Listings
+                    </h1>
+                    {userListings.map((listing) => (
+                        <div
+                            className="border rounded-lg p-3 flex justify-between items-center gap-4"
+                            key={listing._id}
+                        >
+                            <Link to={`/listing/${listing._id}`}>
+                                <img
+                                    src={listing.imageUrls[0]}
+                                    alt="listing image"
+                                    className="w-16 h-16 object-cover rounded-lg"
+                                />
+                            </Link>
+                            <Link
+                                to={`/listing/${listing._id}`}
+                                className="text-slate-700 font-semibold flex-1 hover:underline truncate"
+                            >
+                                <p>{listing.name}</p>
+                            </Link>
+                            <div className="flex flex-col items-center">
+                                <button className="rounded transition cursor-pointer text-green-700 px-3 py-1.5 hover:text-white hover:bg-green-700">
+                                    Edit
+                                </button>
+                                <button className="rounded transition cursor-pointer text-red-700 px-3 py-1.5 hover:text-white hover:bg-red-700">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
