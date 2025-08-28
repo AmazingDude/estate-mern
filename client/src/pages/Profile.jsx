@@ -316,9 +316,11 @@ function Profile() {
                                 <p>{listing.name}</p>
                             </Link>
                             <div className="flex flex-col items-center">
-                                <button className="rounded transition cursor-pointer text-green-700 px-3 py-1.5 hover:text-white hover:bg-green-700">
-                                    Edit
-                                </button>
+                                <Link to={`/update-listing/${listing._id}`}>
+                                    <button className="rounded transition cursor-pointer text-green-700 px-3 py-1.5 hover:text-white hover:bg-green-700">
+                                        Edit
+                                    </button>
+                                </Link>
                                 <button
                                     className="rounded transition cursor-pointer text-red-700 px-3 py-1.5 hover:text-white hover:bg-red-700"
                                     onClick={() =>
