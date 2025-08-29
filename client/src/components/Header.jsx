@@ -1,10 +1,30 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 function Header() {
     const { currentUser } = useSelector((state) => state.user);
+    const [searchTerm, setSearchTerm] = useState("");
+    const navigate = useNavigate();
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set("searchTerm", searchTerm);
+        const searchQuery = urlParams.toString();
+
+        navigate(`/search?${searchQuery}`);
+    };
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(location.search);
+        const searchTermFromUrl = urlParams.get("searchTerm");
+        if (searchTermFromUrl) {
+            setSearchTerm(searchTermFromUrl);
+        }
+    }, [location.search]);
 
     return (
         <header className="bg-zinc-800 shadow-md">
@@ -15,13 +35,20 @@ function Header() {
                         <span className="text-zinc-400">Estate</span>
                     </h1>
                 </Link>
-                <form className="bg-zinc-600 p-3 rounded-lg flex items-center">
+                <form
+                    className="bg-zinc-600 p-3 rounded-lg flex items-center"
+                    onSubmit={handleSubmit}
+                >
                     <input
                         type="text"
                         placeholder="Search"
                         className="bg-transparent text-zinc-300 outline-none w-24 sm:w-64"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <FaSearch color="white" />
+                    <button>
+                        <FaSearch color="white" />
+                    </button>
                 </form>
                 <ul className="flex gap-4">
                     <Link to="/">
