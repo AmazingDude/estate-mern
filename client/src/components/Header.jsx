@@ -46,7 +46,7 @@ function Header() {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <button>
+                    <button className="cursor-pointer">
                         <FaSearch color="white" />
                     </button>
                 </form>
