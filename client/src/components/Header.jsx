@@ -32,7 +32,7 @@ function Header() {
                 <Link to="/">
                     <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
                         <span className="text-zinc-200">Boblox</span>
-                        <span className="text-zinc-400">Estate</span>
+                        <span className="text-teal-400">Estate</span>
                     </h1>
                 </Link>
                 <form
