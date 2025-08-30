@@ -40,35 +40,42 @@ export default function Home() {
                 const data = await res.json();
                 setSaleListings(data);
             } catch (error) {
-                log(error);
+                console.log(error);
             }
         };
         fetchOfferListings();
     }, []);
     return (
         <div>
-            {/* top */}
+            {/* Hero Section */}
             <div className="flex flex-col gap-6 p-28 px-3 max-w-6xl mx-auto">
                 <h1 className="text-slate-700 font-bold text-3xl lg:text-6xl">
                     Find your next{" "}
-                    <span className="text-teal-500">perfect</span>
+                    <span className="relative inline-block">
+                        <span className="text-teal-500 relative z-10">
+                            perfect
+                        </span>
+                        <span className="absolute top-1 left-1 text-teal-700 -z-10">
+                            perfect
+                        </span>
+                    </span>
                     <br />
                     place with ease
                 </h1>
-                <div className="text-gray-400 text-xs sm:text-sm">
-                    Sahand Estate is the best place to find your next perfect
-                    place to live.
-                    <br />
-                    We have a wide range of properties for you to choose from.
+                <div className="w-24 h-1 bg-teal-500 mb-2"></div>
+                <div className="text-gray-600 text-lg sm:text-xl max-w-2xl">
+                    Boblox Estate is the best place to find your next perfect
+                    place to live. We have a wide range of properties for you to
+                    choose from.
                 </div>
                 <Link
                     to={"/search"}
-                    className="text-xs sm:text-sm text-teal-700 font-bold hover:underline"
+                    className="inline-flex items-center gap-2 text-sm sm:text-base bg-teal-500 text-white px-6 py-3 rounded-lg hover:bg-teal-600 transition-colors font-medium w-fit"
                 >
-                    Let's get started...
+                    Let's get started
+                    <span>→</span>
                 </Link>
             </div>
-
             {/* swiper */}
             <Swiper navigation>
                 {offerListings &&
@@ -86,24 +93,25 @@ export default function Home() {
                         </SwiperSlide>
                     ))}
             </Swiper>
-
             {/* listing results for offer, sale and rent */}
-
-            <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 my-10">
+            <div className="max-w-6xl mx-auto p-3 flex flex-col gap-12 my-16">
                 {offerListings && offerListings.length > 0 && (
-                    <div className="">
-                        <div className="my-3">
-                            <h2 className="text-2xl font-semibold text-slate-600">
-                                Recent offers
-                            </h2>
+                    <div className="bg-white rounded-xl p-6 border border-slate-200">
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 className="text-2xl font-semibold text-slate-700">
+                                    Recent Offers
+                                </h2>
+                                <div className="w-16 h-1 bg-teal-500 mt-2"></div>
+                            </div>
                             <Link
-                                className="text-sm text-teal-700 hover:underline"
+                                className="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1"
                                 to={"/search?offer=true"}
                             >
-                                Show more offers
+                                View all offers →
                             </Link>
                         </div>
-                        <div className="flex flex-wrap gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-items-center">
                             {offerListings.map((listing) => (
                                 <ListingItem
                                     listing={listing}
@@ -114,19 +122,22 @@ export default function Home() {
                     </div>
                 )}
                 {rentListings && rentListings.length > 0 && (
-                    <div className="">
-                        <div className="my-3">
-                            <h2 className="text-2xl font-semibold text-slate-600">
-                                Recent places for rent
-                            </h2>
+                    <div className="bg-white rounded-xl p-6 border border-slate-200">
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 className="text-2xl font-semibold text-slate-700">
+                                    Places for Rent
+                                </h2>
+                                <div className="w-16 h-1 bg-teal-500 mt-2"></div>
+                            </div>
                             <Link
-                                className="text-sm text-teal-700 hover:underline"
+                                className="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1"
                                 to={"/search?type=rent"}
                             >
-                                Show more places for rent
+                                View all rentals →
                             </Link>
                         </div>
-                        <div className="flex flex-wrap gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-items-center">
                             {rentListings.map((listing) => (
                                 <ListingItem
                                     listing={listing}
@@ -137,19 +148,22 @@ export default function Home() {
                     </div>
                 )}
                 {saleListings && saleListings.length > 0 && (
-                    <div className="">
-                        <div className="my-3">
-                            <h2 className="text-2xl font-semibold text-slate-600">
-                                Recent places for sale
-                            </h2>
+                    <div className="bg-white rounded-xl p-6 border border-slate-200">
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 className="text-2xl font-semibold text-slate-700">
+                                    Places for Sale
+                                </h2>
+                                <div className="w-16 h-1 bg-teal-500 mt-2"></div>
+                            </div>
                             <Link
-                                className="text-sm text-teal-700 hover:underline"
+                                className="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1"
                                 to={"/search?type=sale"}
                             >
-                                Show more places for sale
+                                View all sales →
                             </Link>
                         </div>
-                        <div className="flex flex-wrap gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-items-center">
                             {saleListings.map((listing) => (
                                 <ListingItem
                                     listing={listing}

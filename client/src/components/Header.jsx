@@ -27,50 +27,64 @@ function Header() {
     }, [location.search]);
 
     return (
-        <header className="bg-zinc-800 shadow-md">
-            <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
-                <Link to="/">
-                    <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
-                        <span className="text-zinc-200">Boblox</span>
-                        <span className="text-teal-400">Estate</span>
+        <header className="bg-slate-900 shadow-lg border-b border-slate-700">
+            <div className="flex justify-between items-center max-w-6xl mx-auto p-4">
+                <Link to="/" className="group">
+                    <h1 className="font-bold text-lg sm:text-2xl flex items-center gap-1">
+                        <span className="text-white group-hover:text-slate-200 transition-colors">
+                            Boblox
+                        </span>
+                        <span className="text-teal-400 group-hover:text-teal-300 transition-colors">
+                            Estate
+                        </span>
                     </h1>
                 </Link>
+
                 <form
-                    className="bg-zinc-600 p-3 rounded-lg flex items-center"
+                    className="bg-slate-700 border border-slate-600 p-3 rounded-xl flex items-center gap-2 hover:bg-slate-600 transition-colors group"
                     onSubmit={handleSubmit}
                 >
                     <input
                         type="text"
-                        placeholder="Search"
-                        className="bg-transparent text-zinc-300 outline-none w-24 sm:w-64"
+                        placeholder="Search properties..."
+                        className="bg-transparent text-slate-200 placeholder-slate-400 outline-none w-32 sm:w-64 text-sm"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <button className="cursor-pointer">
-                        <FaSearch color="white" />
+                    <button className="p-1 hover:bg-slate-500 rounded-lg transition-colors">
+                        <FaSearch
+                            className="text-slate-300 group-hover:text-white transition-colors"
+                            size={16}
+                        />
                     </button>
                 </form>
-                <ul className="flex gap-4">
-                    <Link to="/">
-                        <li className="hidden sm:inline text-slate-200 hover:underline cursor-pointer">
+
+                <ul className="flex items-center gap-6">
+                    <Link to="/" className="group">
+                        <li className="hidden sm:block text-slate-300 hover:text-white transition-colors cursor-pointer font-medium">
                             Home
                         </li>
                     </Link>
-                    <Link to="/about">
-                        <li className="hidden sm:inline text-slate-200 hover:underline cursor-pointer">
+                    <Link to="/about" className="group">
+                        <li className="hidden sm:block text-slate-300 hover:text-white transition-colors cursor-pointer font-medium">
                             About
                         </li>
                     </Link>
-                    <Link to="/profile">
+                    <Link to="/profile" className="group">
                         {currentUser ? (
-                            <img
-                                src={currentUser.avatar}
-                                alt="profile"
-                                className="rounded-full h-7 w-7 object-cover"
-                            />
+                            <div className="flex items-center gap-2">
+                                <img
+                                    src={currentUser.avatar}
+                                    alt="profile"
+                                    className="rounded-full h-8 w-8 object-cover border-2 border-slate-600 group-hover:border-teal-400 transition-colors"
+                                />
+                                <span className="hidden lg:block text-slate-300 group-hover:text-white transition-colors text-sm">
+                                    {currentUser.username}
+                                </span>
+                            </div>
                         ) : (
-                            <li className="sm:inline text-slate-200 hover:underline cursor-pointer">
-                                Sign in
+                            <li className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors cursor-pointer font-medium">
+                                Sign In
                             </li>
                         )}
                     </Link>
