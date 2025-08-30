@@ -34,12 +34,12 @@ export default function OAuth() {
 
     return (
         <button
-            className="bg-black text-white p-3 rounded-lg flex items-center justify-center gap-2 cursor-pointer hover:opacity-85 transition"
+            className="bg-black text-white p-3 rounded-lg flex items-center justify-center gap-2 cursor-pointer hover:opacity-85 transition w-full text-sm sm:text-base font-medium"
             type="button"
             onClick={handleGoogleAuth}
         >
-            <FcGoogle className="text-lg" />
-            Continue with Google
+            <FcGoogle className="text-lg flex-shrink-0" />
+            <span className="truncate">Continue with Google</span>
         </button>
     );
 }

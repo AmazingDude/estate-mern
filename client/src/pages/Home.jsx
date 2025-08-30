@@ -55,7 +55,7 @@ export default function Home() {
                         <span className="text-teal-500 relative z-10">
                             perfect
                         </span>
-                        <span className="absolute top-1 left-1 text-teal-700 -z-10">
+                        <span className="absolute top-1 left-1 text-white -z-10">
                             perfect
                         </span>
                     </span>
