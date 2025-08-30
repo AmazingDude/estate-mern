@@ -14,20 +14,23 @@ const __dirname = path.resolve();
 
 const app = express();
 
-app.use(express.static(path.join(__dirname, "/client/dist")));
-
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
-});
-
 app.use(express.json());
-
 app.use(cookieParser());
 
+// API Routes
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/listing", listingRouter);
 
+// serve static files
+app.use(express.static(path.join(__dirname, "/client/dist")));
+
+// catch all for React Router
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+});
+
+// error handling
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
     const message = err.message || "Internal Server Error";
